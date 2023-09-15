@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .todo-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo App</h1>
+    <form id="add-todo-form">
+        <input type="text" id="todo-title" placeholder="Todo title" required>
+        <button type="submit">Add Todo</button>
+    </form>
+    <ul id="todos-list"></ul>
+    <script>
+        const todosList = document.getElementById('todos-list');
+        const addTodoForm = document.getElementById('add-todo-form');
+        const todoTitleInput = document.getElementById('todo-title');
+
+        function getTodos() {
+            fetch('http://localhost:8000/todos')
+                .then(response => response.json())
+                .then(todos => {
+                    todosList.innerHTML = '';
+                    todos.forEach(todo => {
+                        const li = document.createElement('li');
+                        li.classList.add('todo-item');
+                        li.textContent = todo.title;
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', () => deleteTodo(todo.id));
+                        li.appendChild(deleteButton);
+                        todosList.appendChild(li);
+                    });
+                });
+        }
+
+        function addTodo(e) {
+            e.preventDefault();
+            const title = todoTitleInput.value;
+            fetch('http://localhost:8000/todos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: Date.now(),
+                    title,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    getTodos();
+                    todoTitleInput.value = '';
+                });
+        }
+
+        function deleteTodo(id) {
+            fetch(`http://localhost:8000/todos/${id}`, {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    getTodos();
+                });
+        }
+
+        addTodoForm.addEventListener('submit', addTodo);
+        getTodos();
+    </script>
+</body>
+</html>

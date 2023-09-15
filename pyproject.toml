@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "todo-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["Robert McDermott <robert.c.mcdermott@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^2.3.0"
+uvicorn = "^0.23.2"
+fastapi = "^0.103.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
